@@ -5,4 +5,5 @@ Learning By Doing penetration test
 
 ## directories
 sqli related to sql injection 
+brute force cracking
  
